@@ -17,6 +17,6 @@ namespace AdvancedRobloxArchival
             return Archive.BinaryTypes.Miscellaneous;
         }
 
-        public static bool IsROBLOX(string property) => property?.StartsWith("ROBLOX") ?? false;
+        public static bool IsROBLOX(string property) => property?.ToUpper().StartsWith("ROBLOX") ?? false;
     }
 }

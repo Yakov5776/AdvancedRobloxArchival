@@ -226,7 +226,7 @@ namespace AdvancedRobloxArchival
             if (File.Exists(path))
             {
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(path) ?? null;
-                if (PropertyMatching.IsROBLOX(info?.FileDescription) == true)
+                if (PropertyMatching.IsROBLOX(info?.FileDescription))
                 {
                     bool isTrusted = AuthenticodeTools.IsTrusted(path);
                     if (isTrusted)
