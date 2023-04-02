@@ -147,6 +147,8 @@ namespace AdvancedRobloxArchival
                 ConsoleGlobal.Singleton.WriteColoredOutput(out3, ConsoleColor.Cyan, ConsoleColor.Yellow);
 
                 attempt++;
+                // TODO: better way to do this via Everything rules
+                // Potential solution: acquire and modify EverythingNet to solution and add more versatile rules
                 if (item.FullPath.Substring(1).StartsWith(":\\$Recycle.Bin") || item.FullPath.Substring(1).StartsWith(":\\Windows")) continue;
                 if (CheckedFiles.Contains(item.FullPath)) continue; // intentionally skipped already checked zips.
                 CheckedFiles.Add(item.FullPath);
@@ -172,8 +174,8 @@ namespace AdvancedRobloxArchival
                                     traverseAttempts++;
                                     continue;
                                 }
-                                string exe = Path.GetFileName(entry.FileName);
-                                if (exe.EndsWith(".exe") && (exe.StartsWith("Roblox") || exe.StartsWith("version-") || exe.StartsWith("RCCService")))
+                                string filename = Path.GetFileName(entry.FileName);
+                                if (PropertyMatching.ConsiderBinaryCandidate(filename))
                                 {
                                     filenames.Add(entry.FileName);
                                     unlocked = true;

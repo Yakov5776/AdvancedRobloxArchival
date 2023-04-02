@@ -20,5 +20,10 @@ namespace AdvancedRobloxArchival
         }
 
         public static bool IsROBLOX(string property) => property?.ToUpper().StartsWith("ROBLOX") ?? false;
+
+        public static bool ConsiderBinaryCandidate(string filename)
+        {
+            return filename.EndsWith(".exe") && (filename.StartsWith("Roblox") || filename.StartsWith("version-") || filename.StartsWith("RCCService"));
+        }
     }
 }
