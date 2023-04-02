@@ -1,5 +1,6 @@
 ﻿using EverythingNet.Core;
 using EverythingNet.Interfaces;
+using EverythingNet.Query;
 using Newtonsoft.Json;
 using SevenZip;
 using System;
@@ -113,13 +114,13 @@ namespace AdvancedRobloxArchival
             ConsoleGlobal.Singleton.WriteContent("[*] Waiting for index to finish", ConsoleColor.Yellow);
             while (!EverythingState.IsReady()) Thread.Sleep(1000);
             double attempt = 0;
-            IEverything everything = new Everything();
-            var query = everything.Search().Files.Name.Extension("zip")
+            var everything = new Everything();
+            var query = everything.Search(new Query().Files.Name.Extension("zip")
                                               .Or.Name.Extension("7z")
                                               .Or.Name.Extension("rar")
                                               .Or.Name.Extension("exe")
                                               .And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb)
-                                              .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb);
+                                              .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb));
             int totalattempt = query.Count();
             if (Mode == 2)
             {

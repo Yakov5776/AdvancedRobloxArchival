@@ -1,0 +1,3 @@
+[submodule "EverythingNet"]
+	path = EverythingNet
+	url = https://github.com/Yakov5776/EverythingNet.git
