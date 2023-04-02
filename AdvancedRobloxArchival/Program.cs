@@ -220,6 +220,8 @@ namespace AdvancedRobloxArchival
             ConsoleGlobal.Singleton.WriteColoredOutput(succ1, ConsoleColor.Yellow, ConsoleColor.Green);
             ConsoleGlobal.Singleton.WriteRedSeparator();
             ConsoleGlobal.Singleton.WriteColoredOutput(succ2, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Yellow);
+            TaskbarFlash.FlashWindowEx();
+            System.Media.SystemSounds.Beep.Play();
             Console.ReadLine();
         }
 
