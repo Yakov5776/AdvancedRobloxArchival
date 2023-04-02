@@ -14,7 +14,7 @@ using System.Timers;
 
 namespace AdvancedRobloxArchival
 {
-    public struct Archive
+    public struct BinaryArchive
     {
         public enum BinaryTypes
         {
@@ -23,7 +23,7 @@ namespace AdvancedRobloxArchival
             RobloxStudio,
             RCCService
         }
-        public Archive(bool genuine)
+        public BinaryArchive(bool genuine)
         {
             Genuine = genuine;
             Version = "";
@@ -102,7 +102,7 @@ namespace AdvancedRobloxArchival
             ConsoleGlobal.Singleton.WriteContentNoLine("[*] Enter the full directory path where archives will be kept: ", ConsoleColor.Yellow);
             archivePath = Console.ReadLine().Trim('"');
             if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
-            foreach (string i in Enum.GetNames(typeof(Archive.BinaryTypes)))
+            foreach (string i in Enum.GetNames(typeof(BinaryArchive.BinaryTypes)))
             {
                 string CategoryPath = Path.Combine(archivePath, i);
                 if (!Directory.Exists(CategoryPath)) Directory.CreateDirectory(CategoryPath);
@@ -152,8 +152,8 @@ namespace AdvancedRobloxArchival
                 CheckedFiles.Add(item.FullPath);
                 if (item.FullPath.EndsWith(".exe"))
                 {
-                    Archive aArchive = CheckFileAuthenticity(item.FullPath, false);
-                    if (aArchive.Genuine) ArchiveFile(aArchive);
+                    BinaryArchive binaryArchive = CheckFileAuthenticity(item.FullPath, false);
+                    if (binaryArchive.Genuine) ArchiveFile(binaryArchive);
                 }
                 else
                     try
@@ -183,8 +183,8 @@ namespace AdvancedRobloxArchival
                             var archives = Directory.EnumerateFiles(cache, "*.*", SearchOption.AllDirectories);
                             foreach (string filename in archives)
                             {
-                                Archive aArchive = CheckFileAuthenticity(filename, true);
-                                if (aArchive.Genuine) ArchiveFile(aArchive);
+                                BinaryArchive binaryArchive = CheckFileAuthenticity(filename, true);
+                                if (binaryArchive.Genuine) ArchiveFile(binaryArchive);
                             }
                         }
                     }
@@ -221,7 +221,7 @@ namespace AdvancedRobloxArchival
             Console.ReadLine();
         }
 
-        static Archive CheckFileAuthenticity(string path, bool FromCache = false)
+        static BinaryArchive CheckFileAuthenticity(string path, bool FromCache = false)
         {
             if (File.Exists(path))
             {
@@ -231,19 +231,19 @@ namespace AdvancedRobloxArchival
                     bool isTrusted = AuthenticodeTools.IsTrusted(path);
                     if (isTrusted)
                     {
-                        Archive.BinaryTypes binType = PropertyMatching.GetBinaryTypeFromSignature(info.FileDescription);
-                        
-                        Archive archive = new Archive(true);
+                        BinaryArchive.BinaryTypes binType = PropertyMatching.GetBinaryTypeFromSignature(info.FileDescription);
+
+                        BinaryArchive archive = new BinaryArchive(true);
                         archive.Populate(info.FileVersion.Replace(", ", "."), binType, path, FromCache);
                         return archive;
                     }
                 }
                 if (FromCache) File.Delete(path);
             }
-            return new Archive(false);
+            return new BinaryArchive(false);
         }
 
-        static void ArchiveFile(Archive archive)
+        static void ArchiveFile(BinaryArchive archive)
         {
             string destination = Path.Combine(archivePath, archive.BinaryType.ToString(), archive.Version + ".exe");
             if (File.Exists(destination))
