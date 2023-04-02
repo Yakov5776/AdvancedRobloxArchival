@@ -8,9 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Timers;
 
@@ -51,7 +49,7 @@ namespace AdvancedRobloxArchival
 
     internal class Program
     {
-        public static readonly int version = Assembly.GetExecutingAssembly().GetName().Version.Major;
+        public static readonly int version = typeof(Program).Assembly.GetName().Version.Major;
         public static readonly string cache = Path.Combine(System.IO.Path.GetTempPath(), "ArchiveCache");
         public static string archivePath;
         public static List<string> CheckedFiles = new List<string>();
@@ -228,15 +226,13 @@ namespace AdvancedRobloxArchival
             if (File.Exists(path))
             {
                 FileVersionInfo info = FileVersionInfo.GetVersionInfo(path) ?? null;
-                if (info?.FileDescription?.ToUpper().StartsWith("ROBLOX") == true)
+                if (PropertyMatching.IsROBLOX(info?.FileDescription) == true)
                 {
                     bool isTrusted = AuthenticodeTools.IsTrusted(path);
                     if (isTrusted)
                     {
-                        Archive.BinaryTypes binType = Archive.BinaryTypes.Miscellaneous;
-                        if (info.FileDescription.EndsWith("Client") || info.FileDescription.EndsWith("Game")) binType = Archive.BinaryTypes.RobloxClient;
-                        else if (info.FileDescription.EndsWith("Studio")) binType = Archive.BinaryTypes.RobloxStudio;
-                        else if (info.FileDescription.ToLower() == "roblox compute cloud service") binType = Archive.BinaryTypes.RCCService;
+                        Archive.BinaryTypes binType = PropertyMatching.GetBinaryTypeFromSignature(info.FileDescription);
+                        
                         Archive archive = new Archive(true);
                         archive.Populate(info.FileVersion.Replace(", ", "."), binType, path, FromCache);
                         return archive;

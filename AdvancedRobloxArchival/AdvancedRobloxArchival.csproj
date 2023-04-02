@@ -82,6 +82,7 @@
     <Compile Include="PeHeaderReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyMatching.cs" />
     <Compile Include="SingletonBase.cs" />
   </ItemGroup>
   <ItemGroup>
