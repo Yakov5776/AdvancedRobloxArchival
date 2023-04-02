@@ -60,7 +60,6 @@ namespace AdvancedRobloxArchival
 
         static void Main(string[] args)
         {
-            AuthenticodeTools.IsTrusted(@"C:\Users\Yakov\Downloads\Roblox_1.exe");
             Console.Title = "Advanced Roblox Archival | Made by Yakov :D";
             Start();
         }
@@ -117,7 +116,12 @@ namespace AdvancedRobloxArchival
             while (!EverythingState.IsReady()) Thread.Sleep(1000);
             double attempt = 0;
             IEverything everything = new Everything();
-            var query = everything.Search().Files.Name.Extension("zip").Or.Name.Extension("7z").Or.Name.Extension("rar").Or.Name.Extension("exe").And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb).And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb);
+            var query = everything.Search().Files.Name.Extension("zip")
+                                              .Or.Name.Extension("7z")
+                                              .Or.Name.Extension("rar")
+                                              .Or.Name.Extension("exe")
+                                              .And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb)
+                                              .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb);
             int totalattempt = query.Count();
             if (Mode == 2)
             {
@@ -147,7 +151,7 @@ namespace AdvancedRobloxArchival
                 ConsoleGlobal.Singleton.WriteContentNoLine(ArchivedCount.ToString(), ConsoleColor.Cyan);
                 ConsoleGlobal.Singleton.WriteContentNoLine(")", ConsoleColor.White);
                 ConsoleGlobal.Singleton.WriteContentNoLine(" | ", ConsoleColor.Red);
-                ConsoleGlobal.Singleton.WriteContentNoLine($"{attempt/totalattempt*100:0}% ", ConsoleColor.Cyan);
+                ConsoleGlobal.Singleton.WriteContentNoLine($"{attempt / totalattempt * 100:0}% ", ConsoleColor.Cyan);
                 ConsoleGlobal.Singleton.WriteContentNoLine("Complete!", ConsoleColor.Yellow);
 
                 attempt++;
