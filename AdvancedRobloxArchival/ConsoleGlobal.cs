@@ -22,6 +22,20 @@ namespace AdvancedRobloxArchival
             Console.ForegroundColor = ConsoleColor.White;
         }
 
+        public void WriteColoredOutput(string output, params ConsoleColor[] colors)
+        {
+            int colorIndex = 0;
+            foreach (string part in output.Split('|'))
+            {
+                WriteContentNoLine(part, colors[colorIndex++]);
+            }
+        }
+
+        public void WriteRedSeparator()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write(" | ");
+        }
 
         public void WriteContentThread(int Thread, string content, ConsoleColor color)
         {
@@ -34,7 +48,7 @@ namespace AdvancedRobloxArchival
             string menu = string.Empty;
             foreach (string Option in Options)
             {
-                menu += $" {index.ToString()}. {Option}\n";
+                menu += $" {index}. {Option}\n";
                 index++;
             }
 

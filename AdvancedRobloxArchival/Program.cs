@@ -138,21 +138,15 @@ namespace AdvancedRobloxArchival
             foreach (var item in query)
             {
                 ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
-                ConsoleGlobal.Singleton.WriteContentNoLine("[*] Sorting through archives ", ConsoleColor.Yellow);
-                ConsoleGlobal.Singleton.WriteContentNoLine("(", ConsoleColor.White);
-                ConsoleGlobal.Singleton.WriteContentNoLine(attempt.ToString(), ConsoleColor.Cyan);
-                ConsoleGlobal.Singleton.WriteContentNoLine("/", ConsoleColor.DarkGray);
-                ConsoleGlobal.Singleton.WriteContentNoLine(totalattempt.ToString(), ConsoleColor.Cyan);
-                ConsoleGlobal.Singleton.WriteContentNoLine(" attempts", ConsoleColor.Yellow);
-                ConsoleGlobal.Singleton.WriteContentNoLine(")", ConsoleColor.White);
-                ConsoleGlobal.Singleton.WriteContentNoLine(" | ", ConsoleColor.Red);
-                ConsoleGlobal.Singleton.WriteContentNoLine("Archived: ", ConsoleColor.Yellow);
-                ConsoleGlobal.Singleton.WriteContentNoLine("(", ConsoleColor.White);
-                ConsoleGlobal.Singleton.WriteContentNoLine(ArchivedCount.ToString(), ConsoleColor.Cyan);
-                ConsoleGlobal.Singleton.WriteContentNoLine(")", ConsoleColor.White);
-                ConsoleGlobal.Singleton.WriteContentNoLine(" | ", ConsoleColor.Red);
-                ConsoleGlobal.Singleton.WriteContentNoLine($"{attempt / totalattempt * 100:0}% ", ConsoleColor.Cyan);
-                ConsoleGlobal.Singleton.WriteContentNoLine("Complete!", ConsoleColor.Yellow);
+                string out1 = $"[*] Sorting through archives |(|{attempt}|/|{totalattempt}| attempts|)";
+                string out2 = $"Archived: |(|{ArchivedCount}|)";
+                string out3 = $"{attempt / totalattempt * 100:0}%| Complete!";
+
+                ConsoleGlobal.Singleton.WriteColoredOutput(out1, ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.DarkGray, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.White);
+                ConsoleGlobal.Singleton.WriteRedSeparator();
+                ConsoleGlobal.Singleton.WriteColoredOutput(out2, ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.White);
+                ConsoleGlobal.Singleton.WriteRedSeparator();
+                ConsoleGlobal.Singleton.WriteColoredOutput(out3, ConsoleColor.Cyan, ConsoleColor.Yellow);
 
                 attempt++;
                 if (item.FullPath.Substring(1).StartsWith(":\\$Recycle.Bin") || item.FullPath.Substring(1).StartsWith(":\\Windows")) continue;
@@ -219,14 +213,13 @@ namespace AdvancedRobloxArchival
             TimeSpan totalTimeTaken = DateTime.Now.Subtract(startTime);
             worker.RunWorkerAsync();
             ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
-            ConsoleGlobal.Singleton.WriteContentNoLine("[*] ", ConsoleColor.Yellow);
-            ConsoleGlobal.Singleton.WriteContentNoLine("Archive Completed!!!", ConsoleColor.Green);
-            ConsoleGlobal.Singleton.WriteContentNoLine(" | ", ConsoleColor.Red);
-            ConsoleGlobal.Singleton.WriteContentNoLine("Archived ", ConsoleColor.Yellow);
-            ConsoleGlobal.Singleton.WriteContentNoLine(ArchivedCount.ToString(), ConsoleColor.Cyan);
-            ConsoleGlobal.Singleton.WriteContentNoLine(" files in ", ConsoleColor.Yellow);
-            ConsoleGlobal.Singleton.WriteContentNoLine(((int)totalTimeTaken.TotalMinutes).ToString(), ConsoleColor.Cyan);
-            ConsoleGlobal.Singleton.WriteContentNoLine($" minutes!!!", ConsoleColor.Yellow);
+
+            string succ1 = "[*] |Archive Completed!!!";
+            string succ2 = $"Archived |{ArchivedCount}| files in |{(int)totalTimeTaken.TotalMinutes}| minutes!!";
+
+            ConsoleGlobal.Singleton.WriteColoredOutput(succ1, ConsoleColor.Yellow, ConsoleColor.Green);
+            ConsoleGlobal.Singleton.WriteRedSeparator();
+            ConsoleGlobal.Singleton.WriteColoredOutput(succ2, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Yellow);
             Console.ReadLine();
         }
 
