@@ -271,7 +271,9 @@ namespace AdvancedRobloxArchival
                 else
                     File.Copy(archive.Path, destination);
 
-                File.SetLastWriteTimeUtc(destination, new PeHeaderReader(destination).TimeStamp);
+                DateTime fileTimeStamp = new PeHeaderReader(destination).TimeStamp;
+                if (fileTimeStamp < DateTime.UtcNow && fileTimeStamp > new DateTime(2005, 1, 1)) // Ensure they're not a super old date or a future date
+                    File.SetLastWriteTimeUtc(destination, fileTimeStamp);
             }
         }
 
