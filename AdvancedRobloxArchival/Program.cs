@@ -57,13 +57,20 @@ namespace AdvancedRobloxArchival
         public static BackgroundWorker worker = new BackgroundWorker();
         public static int ArchivedCount = 0;
 
+        private enum Modes : int
+        {
+            Unspecified,
+            ScanAllDrives,
+            ScanSpecificDirectories
+        }
+
         static void Main(string[] args)
         {
             Console.Title = "Advanced Roblox Archival | Made by Yakov :D";
             Start();
         }
 
-        static void Start(int Mode = -1)
+        static void Start(Modes Mode = Modes.Unspecified)
         {
             ConsoleGlobal.Singleton.WriteContent($"Revision {version.ToString()}", ConsoleColor.DarkGray);
             ConsoleGlobal.Singleton.WriteContent(@"    _      _                         _   ___  ___  ___ _    _____  __              _    _          _ 
@@ -74,7 +81,7 @@ namespace AdvancedRobloxArchival
 ", ConsoleColor.Cyan);
             if (Directory.Exists(cache)) new DirectoryInfo(cache).Delete(true);
             Directory.CreateDirectory(cache);
-            if (Mode == -1)
+            if (Mode == Modes.Unspecified)
             {
                 ConsoleGlobal.Singleton.WriteContent(@" features:
   - it searches whole pc using voidtools sdk (it sorts through exe, zip, 7z, and rar)
@@ -89,12 +96,12 @@ namespace AdvancedRobloxArchival
 
                 int Choice = ConsoleGlobal.Singleton.WriteChoiceMenu(Options, ConsoleColor.Yellow, ConsoleColor.White);
                 Console.Clear();
-                Start(Choice);
+                Start((Modes)Choice);
                 return;
             }
 
             string targetDir = string.Empty;
-            if (Mode == 2)
+            if (Mode == Modes.ScanSpecificDirectories)
             {
                 ConsoleGlobal.Singleton.WriteContentNoLine("[*] Enter the path of which you would like to search in: ", ConsoleColor.Yellow);
                 targetDir = Console.ReadLine().Trim('"');
@@ -121,13 +128,13 @@ namespace AdvancedRobloxArchival
                                               .Or.Name.Extension("exe")
                                               .And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb)
                                               .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb));
-            int totalattempt = query.Count();
-            if (Mode == 2)
+            if (Mode == Modes.ScanAllDrives)
             {
                 ConsoleGlobal.Singleton.WriteContent("[*] Specific directory searching is not available yet! Check back later.", ConsoleColor.Red);
                 Console.ReadLine();
                 return;
             }
+            int totalattempts = query.Count();
             if (File.Exists("CheckedFiles.json")) CheckedFiles = JsonConvert.DeserializeObject<List<string>>(File.ReadAllText("CheckedFiles.json"));
             worker.DoWork += SaveConfigOccasionally;
             System.Timers.Timer timer = new System.Timers.Timer(60000);
@@ -137,9 +144,9 @@ namespace AdvancedRobloxArchival
             foreach (var item in query)
             {
                 ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
-                string out1 = $"[*] Sorting through archives |(|{attempt}|/|{totalattempt}| attempts|)";
+                string out1 = $"[*] Sorting through archives |(|{attempt}|/|{totalattempts}| attempts|)";
                 string out2 = $"Archived: |(|{ArchivedCount}|)";
-                string out3 = $"{attempt / totalattempt * 100:0}%| Complete!";
+                string out3 = $"{attempt / totalattempts * 100:0}%| Complete!";
 
                 ConsoleGlobal.Singleton.WriteColoredOutput(out1, ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.DarkGray, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.White);
                 ConsoleGlobal.Singleton.WriteRedSeparator();
