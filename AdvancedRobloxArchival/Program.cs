@@ -128,7 +128,7 @@ namespace AdvancedRobloxArchival
                                               .Or.Name.Extension("exe")
                                               .And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb)
                                               .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb));
-            if (Mode == Modes.ScanAllDrives)
+            if (Mode == Modes.ScanSpecificDirectories)
             {
                 ConsoleGlobal.Singleton.WriteContent("[*] Specific directory searching is not available yet! Check back later.", ConsoleColor.Red);
                 Console.ReadLine();
