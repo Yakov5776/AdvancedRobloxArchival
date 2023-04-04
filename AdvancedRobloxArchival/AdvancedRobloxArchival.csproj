@@ -104,10 +104,12 @@
     <ItemGroup Condition="'$(Platform)' == 'x86'">
       <CopyFile Include="$(ProjectDir)\$(x86bin)" DestinationFolder="$(TargetDir)" />
       <CopyFile Include="$(ProjectDir)\$(x86dll)" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(ProjectDir)\7z.dll" DestinationFolder="$(TargetDir)" />
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)' == 'x64'">
       <CopyFile Include="$(ProjectDir)\$(x64bin)" DestinationFolder="$(TargetDir)" />
       <CopyFile Include="$(ProjectDir)\$(x64dll)" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(ProjectDir)\7z64.dll" DestinationFolder="$(TargetDir)" />
     </ItemGroup>
     <Copy SourceFiles="@(CopyFile)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"/>
   </Target>
