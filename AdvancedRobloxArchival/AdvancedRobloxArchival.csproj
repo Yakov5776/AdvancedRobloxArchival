@@ -109,7 +109,7 @@
       <CopyFile Include="$(ProjectDir)\$(x64bin)" DestinationFolder="$(TargetDir)" />
       <CopyFile Include="$(ProjectDir)\$(x64dll)" DestinationFolder="$(TargetDir)" />
     </ItemGroup>
-    <Copy SourceFiles="@(CopyFile)" DestinationFolder="$(TargetDir)" />
+    <Copy SourceFiles="@(CopyFile)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true"/>
   </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
