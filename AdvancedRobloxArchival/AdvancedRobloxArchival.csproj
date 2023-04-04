@@ -54,6 +54,26 @@
     <ErrorReport>prompt</ErrorReport>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -93,13 +113,22 @@
       <Name>EverythingNet</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Everything.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Everything64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
+  <Target Name="CopyFiles" AfterTargets="Build">
+    <PropertyGroup>
+      <x86bin>Everything32.exe</x86bin>
+      <x64bin>Everything64.exe</x64bin>
+      <x86dll>Everything32.dll</x86dll>
+      <x64dll>Everything64.dll</x64dll>
+    </PropertyGroup>
+    <ItemGroup Condition="'$(Platform)' == 'x86'">
+      <CopyFile Include="$(ProjectDir)\$(x86bin)" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(ProjectDir)\$(x86dll)" DestinationFolder="$(TargetDir)" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(Platform)' == 'x64'">
+      <CopyFile Include="$(ProjectDir)\$(x64bin)" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(ProjectDir)\$(x64dll)" DestinationFolder="$(TargetDir)" />
+    </ItemGroup>
+    <Copy SourceFiles="@(CopyFile)" DestinationFolder="$(TargetDir)" />
+  </Target>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
