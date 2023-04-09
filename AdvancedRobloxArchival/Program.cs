@@ -1,5 +1,4 @@
 ﻿using EverythingNet.Core;
-using EverythingNet.Interfaces;
 using EverythingNet.Query;
 using Newtonsoft.Json;
 using SevenZip;
@@ -51,7 +50,7 @@ namespace AdvancedRobloxArchival
     internal class Program
     {
         public static readonly Version version = typeof(Program).Assembly.GetName().Version;
-        public static readonly string cache = Path.Combine(System.IO.Path.GetTempPath(), "ArchiveCache");
+        public static readonly string cache = Path.Combine(Path.GetTempPath(), "ArchiveCache");
         public static string archivePath;
         public static List<string> CheckedFiles = new List<string>();
         public static BackgroundWorker worker = new BackgroundWorker();

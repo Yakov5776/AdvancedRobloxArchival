@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AdvancedRobloxArchival
+﻿namespace AdvancedRobloxArchival
 {
     public class SingletonBase<TSingleton> 
         where TSingleton : class, new()
