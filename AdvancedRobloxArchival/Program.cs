@@ -50,12 +50,27 @@ namespace AdvancedRobloxArchival
 
     internal class Program
     {
-        public static readonly int version = typeof(Program).Assembly.GetName().Version.Major;
+        public static readonly Version version = typeof(Program).Assembly.GetName().Version;
         public static readonly string cache = Path.Combine(System.IO.Path.GetTempPath(), "ArchiveCache");
         public static string archivePath;
         public static List<string> CheckedFiles = new List<string>();
         public static BackgroundWorker worker = new BackgroundWorker();
         public static int ArchivedCount = 0;
+
+        public static string versionString
+        {
+            get
+            {
+                // Construct the string with the major and minor version (if applicable)
+                string versionString = version.Major.ToString();
+                if (version.Minor > 0)
+                {
+                    versionString += $".{version.Minor}";
+                }
+
+                return versionString;
+            }
+        }
 
         private enum Modes : int
         {
@@ -72,7 +87,7 @@ namespace AdvancedRobloxArchival
 
         static void Start(Modes Mode = Modes.Unspecified)
         {
-            ConsoleGlobal.Singleton.WriteContent($"Revision {version.ToString()}", ConsoleColor.DarkGray);
+            ConsoleGlobal.Singleton.WriteContent($"Revision {versionString}", ConsoleColor.DarkGray);
             ConsoleGlobal.Singleton.WriteContent(@"    _      _                         _   ___  ___  ___ _    _____  __              _    _          _ 
    /_\  __| |_ ____ _ _ _  __ ___ __| | | _ \/ _ \| _ ) |  / _ \ \/ /  __ _ _ _ __| |_ (_)_ ____ _| |
   / _ \/ _` \ V / _` | ' \/ _/ -_) _` | |   / (_) | _ \ |_| (_) >  <  / _` | '_/ _| ' \| \ V / _` | |
