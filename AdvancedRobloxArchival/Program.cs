@@ -285,7 +285,7 @@ namespace AdvancedRobloxArchival
 
         static void SaveConfigOccasionally(object sender, DoWorkEventArgs e)
         {
-            File.WriteAllText("CheckedFiles.json", JsonConvert.SerializeObject(CheckedFiles));
+            File.WriteAllText("CheckedFiles.json", JsonConvert.SerializeObject(CheckedFiles.ToArray()));
         }
     }
 }
