@@ -55,6 +55,7 @@ namespace AdvancedRobloxArchival
         private static List<string> CheckedFiles = new List<string>();
         private static BackgroundWorker worker = new BackgroundWorker();
         private static int ArchivedCount = 0;
+        private static int UploadArchivedCount = 0;
         private static int UploadQueue = 0;
         public static bool UseArchiveServer;
 
@@ -338,13 +339,22 @@ namespace AdvancedRobloxArchival
                     UploadQueue++;
                     Thread uploadThread = new Thread(() =>
                     {
-                        bool success = FtpManager.UploadFile(binary.BinaryType, binary.Path);
-                        if (success) UploadQueue--;
-                        else
+                        bool success = FtpManager.UploadFile(binary);
+                        if (success) UploadArchivedCount++;
+                        else // Upload failed; attempt and retry 5 times.
                         {
-                            // TODO: retries, and of course, if repeatedly fail, then disable this feature.
-                            UploadQueue--;
+                            for (int i = 1; i <= 5; i++)
+                            {
+                                bool successRetry = FtpManager.UploadFile(binary);
+                                if (successRetry)
+                                {
+                                    UploadArchivedCount++;
+                                    break;
+                                }
+                                else if (i == 5 && UploadArchivedCount <= 0) Program.UseArchiveServer = false; // Disable this feature; doesn't seem to work.
+                            }
                         }
+                        UploadQueue--;
                     });
                     uploadThread.IsBackground = true;
                     uploadThread.Start();

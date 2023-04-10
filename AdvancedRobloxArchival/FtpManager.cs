@@ -71,15 +71,15 @@ namespace AdvancedRobloxArchival
             }
         }
 
-        public static bool UploadFile(BinaryArchive.BinaryTypes binaryType, string filepath)
+        public static bool UploadFile(BinaryArchive binary)
         {
-            FtpRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/{binaryType}/{Path.GetFileName(filepath)}");
+            FtpRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/{binary.BinaryType}/{Path.GetFileName(binary.Path)}");
             FtpRequest.Method = WebRequestMethods.Ftp.UploadFile;
 
             try
             {
                 using (Stream destinationStream = FtpRequest.GetRequestStream())
-                using (FileStream sourceStream = new FileStream(filepath, FileMode.Open))
+                using (FileStream sourceStream = new FileStream(binary.Path, FileMode.Open))
                 {
                     sourceStream.CopyTo(destinationStream);
                 }
