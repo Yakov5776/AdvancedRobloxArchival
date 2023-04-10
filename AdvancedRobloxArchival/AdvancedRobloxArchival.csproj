@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuthenticodeTools.cs" />
+    <Compile Include="BinaryArchive.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="ConsoleGlobal.cs" />
     <Compile Include="FtpManager.cs" />

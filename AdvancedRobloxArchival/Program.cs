@@ -14,49 +14,16 @@ using System.Timers;
 
 namespace AdvancedRobloxArchival
 {
-    public struct BinaryArchive
-    {
-        public enum BinaryTypes
-        {
-            Miscellaneous,
-            RobloxClient,
-            RobloxStudio,
-            RCCService
-        }
-        public BinaryArchive(bool genuine)
-        {
-            Genuine = genuine;
-            Version = "";
-            BinaryType = BinaryTypes.Miscellaneous;
-            Path = "";
-            FromCache = false;
-        }
-
-        public void Populate(string version, BinaryTypes binarytype, string path, bool fromcache)
-        {
-            Version = version;
-            BinaryType = binarytype;
-            Path = path;
-            FromCache = fromcache;
-        }
-
-        public bool Genuine { get; }
-        public string Path { get; set; }
-        public string Version { get; set; }
-        public BinaryTypes BinaryType { get; set; }
-        public bool FromCache { get; set; }
-    }
-
     internal class Program
     {
         public static readonly Version version = typeof(Program).Assembly.GetName().Version;
-        private static readonly string CachePath = Path.Combine(Path.GetTempPath(), "ArchiveCache");
-        private static string ArchivePath;
+        public static readonly string CachePath = Path.Combine(Path.GetTempPath(), "ArchiveCache");
+        public static string ArchivePath;
         private static List<string> CheckedFiles = new List<string>();
         private static BackgroundWorker worker = new BackgroundWorker();
-        private static int ArchivedCount = 0;
-        private static int UploadArchivedCount = 0;
-        private static int UploadQueue = 0;
+        public static int ArchivedCount = 0;
+        public static int UploadArchivedCount = 0;
+        public static int UploadQueue = 0;
         public static bool UseArchiveServer;
 
 
@@ -206,8 +173,8 @@ namespace AdvancedRobloxArchival
                 CheckedFiles.Add(item.FullPath);
                 if (item.FullPath.EndsWith(".exe"))
                 {
-                    BinaryArchive binaryArchive = CheckFileAuthenticity(item.FullPath, false);
-                    if (binaryArchive.Genuine) ArchiveFile(binaryArchive);
+                    BinaryArchive binaryArchive = BinaryArchive.CheckFileAuthenticity(item.FullPath, false);
+                    if (binaryArchive.Genuine) BinaryArchive.ArchiveFile(binaryArchive);
                 }
                 else
                     try
@@ -237,8 +204,8 @@ namespace AdvancedRobloxArchival
                             var archives = Directory.EnumerateFiles(CachePath, "*.*", SearchOption.AllDirectories);
                             foreach (string filename in archives)
                             {
-                                BinaryArchive binaryArchive = CheckFileAuthenticity(filename, true);
-                                if (binaryArchive.Genuine) ArchiveFile(binaryArchive);
+                                BinaryArchive binaryArchive = BinaryArchive.CheckFileAuthenticity(filename, true);
+                                if (binaryArchive.Genuine) BinaryArchive.ArchiveFile(binaryArchive);
                             }
                         }
                     }
@@ -290,76 +257,6 @@ namespace AdvancedRobloxArchival
                 ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
             }
             Console.ReadLine();
-        }
-
-        static BinaryArchive CheckFileAuthenticity(string path, bool FromCache = false)
-        {
-            if (File.Exists(path))
-            {
-                FileVersionInfo info = FileVersionInfo.GetVersionInfo(path) ?? null;
-                if (PropertyMatching.IsROBLOX(info?.FileDescription))
-                {
-                    bool isTrusted = AuthenticodeTools.IsTrusted(path);
-                    if (isTrusted)
-                    {
-                        BinaryArchive.BinaryTypes binType = PropertyMatching.GetBinaryTypeFromSignature(info.FileDescription);
-
-                        BinaryArchive binary = new BinaryArchive(true);
-                        binary.Populate(info.FileVersion.Replace(", ", "."), binType, path, FromCache);
-                        return binary;
-                    }
-                }
-                if (FromCache) File.Delete(path);
-            }
-            return new BinaryArchive(false);
-        }
-
-        static void ArchiveFile(BinaryArchive binary)
-        {
-            string destination = Path.Combine(ArchivePath, binary.BinaryType.ToString(), binary.Version + ".exe");
-            if (File.Exists(destination))
-            {
-                if (binary.FromCache)
-                    File.Delete(binary.Path);
-            }
-            else
-            {
-                ArchivedCount++;
-                if (binary.FromCache)
-                    File.Move(binary.Path, destination);
-                else
-                    File.Copy(binary.Path, destination);
-
-                DateTime fileTimeStamp = new PeHeaderReader(destination).TimeStamp;
-                if (fileTimeStamp < DateTime.UtcNow && fileTimeStamp > new DateTime(2005, 1, 1)) // Ensure they're not a super old date or a future date
-                    File.SetLastWriteTimeUtc(destination, fileTimeStamp);
-
-                if (UseArchiveServer)
-                {
-                    UploadQueue++;
-                    Thread uploadThread = new Thread(() =>
-                    {
-                        bool success = FtpManager.UploadFile(binary);
-                        if (success) UploadArchivedCount++;
-                        else // Upload failed; attempt and retry 5 times.
-                        {
-                            for (int i = 1; i <= 5; i++)
-                            {
-                                bool successRetry = FtpManager.UploadFile(binary);
-                                if (successRetry)
-                                {
-                                    UploadArchivedCount++;
-                                    break;
-                                }
-                                else if (i == 5 && UploadArchivedCount <= 0) Program.UseArchiveServer = false; // Disable this feature; doesn't seem to work.
-                            }
-                        }
-                        UploadQueue--;
-                    });
-                    uploadThread.IsBackground = true;
-                    uploadThread.Start();
-                }
-            }
         }
 
         static void timer_Elapsed(object sender, ElapsedEventArgs e)
