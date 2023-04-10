@@ -303,9 +303,9 @@ namespace AdvancedRobloxArchival
                     {
                         BinaryArchive.BinaryTypes binType = PropertyMatching.GetBinaryTypeFromSignature(info.FileDescription);
 
-                        BinaryArchive archive = new BinaryArchive(true);
-                        archive.Populate(info.FileVersion.Replace(", ", "."), binType, path, FromCache);
-                        return archive;
+                        BinaryArchive binary = new BinaryArchive(true);
+                        binary.Populate(info.FileVersion.Replace(", ", "."), binType, path, FromCache);
+                        return binary;
                     }
                 }
                 if (FromCache) File.Delete(path);
@@ -313,21 +313,21 @@ namespace AdvancedRobloxArchival
             return new BinaryArchive(false);
         }
 
-        static void ArchiveFile(BinaryArchive archive)
+        static void ArchiveFile(BinaryArchive binary)
         {
-            string destination = Path.Combine(ArchivePath, archive.BinaryType.ToString(), archive.Version + ".exe");
+            string destination = Path.Combine(ArchivePath, binary.BinaryType.ToString(), binary.Version + ".exe");
             if (File.Exists(destination))
             {
-                if (archive.FromCache)
-                    File.Delete(archive.Path);
+                if (binary.FromCache)
+                    File.Delete(binary.Path);
             }
             else
             {
                 ArchivedCount++;
-                if (archive.FromCache)
-                    File.Move(archive.Path, destination);
+                if (binary.FromCache)
+                    File.Move(binary.Path, destination);
                 else
-                    File.Copy(archive.Path, destination);
+                    File.Copy(binary.Path, destination);
 
                 DateTime fileTimeStamp = new PeHeaderReader(destination).TimeStamp;
                 if (fileTimeStamp < DateTime.UtcNow && fileTimeStamp > new DateTime(2005, 1, 1)) // Ensure they're not a super old date or a future date
@@ -338,7 +338,7 @@ namespace AdvancedRobloxArchival
                     UploadQueue++;
                     Thread uploadThread = new Thread(() =>
                     {
-                        bool success = FtpManager.UploadFile(archive.BinaryType, archive.Path);
+                        bool success = FtpManager.UploadFile(binary.BinaryType, binary.Path);
                         if (success) UploadQueue--;
                         else
                         {
