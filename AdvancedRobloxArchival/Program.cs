@@ -288,7 +288,7 @@ namespace AdvancedRobloxArchival
                     string argumentValue = arg.Trim('"');
                     switch (currentArgument)
                     {
-                        case "Mode":
+                        case "mode":
                             Modes mode;
                             if (Enum.TryParse(argumentValue, out mode))
                             {
@@ -299,7 +299,7 @@ namespace AdvancedRobloxArchival
                 }
                 else
                 {
-                    currentArgument = arg.Substring(1);
+                    currentArgument = arg.Substring(1).ToLower();
                     switch (currentArgument)
                     {
                         case "?":
