@@ -81,22 +81,28 @@ namespace AdvancedRobloxArchival
 
                 if (Program.UseArchiveServer)
                 {
+                    if (!FtpManager.InitializeFtpConnection()) return;
+
                     Program.UploadQueue++;
                     Thread uploadThread = new Thread(() =>
                     {
-                        bool success = FtpManager.UploadFile(binary);
-                        if (success) Program.UploadArchivedCount++;
-                        else // Upload failed; attempt and retry 5 times.
+                        bool exists = FtpManager.FileExists(binary);
+                        if (!exists)
                         {
-                            for (int i = 1; i <= 5; i++)
+                            bool success = FtpManager.UploadFile(binary);
+                            if (success) Program.UploadArchivedCount++;
+                            else // Upload failed; attempt and retry 5 times.
                             {
-                                bool successRetry = FtpManager.UploadFile(binary);
-                                if (successRetry)
+                                for (int i = 1; i <= 5; i++)
                                 {
-                                    Program.UploadArchivedCount++;
-                                    break;
+                                    bool successRetry = FtpManager.UploadFile(binary);
+                                    if (successRetry)
+                                    {
+                                        Program.UploadArchivedCount++;
+                                        break;
+                                    }
+                                    else if (i == 5 && Program.UploadArchivedCount <= 0) Program.UseArchiveServer = false; // Disable this feature; doesn't seem to work.
                                 }
-                                else if (i == 5 && Program.UploadArchivedCount <= 0) Program.UseArchiveServer = false; // Disable this feature; doesn't seem to work.
                             }
                         }
                         Program.UploadQueue--;

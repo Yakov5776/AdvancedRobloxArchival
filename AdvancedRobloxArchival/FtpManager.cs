@@ -21,32 +21,8 @@ namespace AdvancedRobloxArchival
 
     internal class FtpManager
     {
-        public static bool isConnected { get; set; }
-        private static FtpWebRequest _ftpWebRequest;
-        private static FtpWebRequest FtpRequest
-        {
-            get
-            {
-                if (_ftpWebRequest == null)
-                {
-                    _ftpWebRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/");
-                    _ftpWebRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
-                    try
-                    {
-                        using (FtpWebResponse response = (FtpWebResponse)_ftpWebRequest.GetResponse())
-                        {
-                            response.GetResponseStream(); //TODO: put all existing files in a list so we dont reupload
-                        }
-                    }
-                    catch
-                    {
-                        Program.UseArchiveServer = false; // Can't connect! don't enable this feature.
-                    }
-                }
-                return _ftpWebRequest;
-            }
-            set { _ftpWebRequest = value; }
-        }
+        private static List<KeyValuePair<string, BinaryTypes>> ExistingUploads = new List<KeyValuePair<string, BinaryTypes>>();
+        private static FtpWebRequest FtpRequest { get; set; }
         private static FtpWebRequest CreateNewFtpWebRequest(string requestUriString)
         {
             FtpWebRequest ftpWebRequest = (FtpWebRequest)WebRequest.Create(requestUriString);
@@ -92,6 +68,46 @@ namespace AdvancedRobloxArchival
             {
                 return false;
             }
+        }
+
+        public static bool FileExists(BinaryArchive binary)
+        {
+            return (ExistingUploads.Any(x => x.Key == Path.GetFileName(binary.Path) && x.Value == binary.BinaryType));
+        }
+
+        public static bool InitializeFtpConnection()
+        {
+            if (FtpRequest != null) return true;
+
+            foreach (string i in Enum.GetNames(typeof(BinaryArchive.BinaryTypes)))
+            {
+                FtpRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/{i}/");
+                FtpRequest.Method = WebRequestMethods.Ftp.ListDirectoryDetails;
+                try
+                {
+                    using (FtpWebResponse response = (FtpWebResponse)FtpRequest.GetResponse())
+                    using (Stream responseStream = response.GetResponseStream())
+                    using (StreamReader reader = new StreamReader(responseStream))
+                    {
+                        string line;
+                        while ((line = reader.ReadLine()) != null)
+                        {
+                            string[] lineParts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            string fileName = lineParts[lineParts.Length - 1];
+                            ExistingUploads.Add(new KeyValuePair<string, BinaryTypes>(fileName, (BinaryTypes)Enum.Parse(typeof(BinaryTypes), i)));
+                        }
+
+                        response.Close();
+                    }
+                }
+                catch
+                {
+                    Program.UseArchiveServer = false; // Can't connect! don't enable this feature.
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
