@@ -21,6 +21,7 @@ namespace AdvancedRobloxArchival
         public static string ArchivePath;
         private static List<string> CheckedFiles = new List<string>();
         private static BackgroundWorker worker = new BackgroundWorker();
+        private static Modes CurrentMode = Modes.Unspecified;
         public static int ArchivedCount = 0;
         public static int UploadArchivedCount = 0;
         public static int UploadQueue = 0;
@@ -55,7 +56,7 @@ namespace AdvancedRobloxArchival
             Start();
         }
 
-        static void Start(Modes Mode = Modes.Unspecified)
+        static void Start()
         {
             ConsoleGlobal.Singleton.WriteContent($"Revision {versionString}", ConsoleColor.DarkGray);
             ConsoleGlobal.Singleton.WriteContent(@"    _      _                         _   ___  ___  ___ _    _____  __              _    _          _ 
@@ -66,7 +67,7 @@ namespace AdvancedRobloxArchival
 ", ConsoleColor.Cyan);
             if (Directory.Exists(CachePath)) new DirectoryInfo(CachePath).Delete(true);
             Directory.CreateDirectory(CachePath);
-            if (Mode == Modes.Unspecified)
+            if (CurrentMode == Modes.Unspecified)
             {
                 ConsoleGlobal.Singleton.WriteContent(@" features:
   - it searches whole pc using voidtools sdk (it sorts through exe, zip, 7z, and rar)
@@ -99,12 +100,13 @@ namespace AdvancedRobloxArchival
 
                 int Choice = ConsoleGlobal.Singleton.WriteChoiceMenu(Options, ConsoleColor.Yellow, ConsoleColor.White);
                 Console.Clear();
-                Start((Modes)Choice);
+                CurrentMode = (Modes)Choice;
+                Start();
                 return;
             }
 
             string targetDir = string.Empty;
-            if (Mode == Modes.ScanSpecificDirectories)
+            if (CurrentMode == Modes.ScanSpecificDirectories)
             {
                 ConsoleGlobal.Singleton.WriteContentNoLine("[*] Enter the path of which you would like to search in: ", ConsoleColor.Yellow);
                 targetDir = Console.ReadLine().Trim('"');
@@ -131,7 +133,7 @@ namespace AdvancedRobloxArchival
                                               .Or.Name.Extension("exe")
                                               .And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb)
                                               .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb));
-            if (Mode == Modes.ScanSpecificDirectories)
+            if (CurrentMode == Modes.ScanSpecificDirectories)
             {
                 ConsoleGlobal.Singleton.WriteContent("[*] Specific directory searching is not available yet! Check back later.", ConsoleColor.Red);
                 Console.ReadLine();
