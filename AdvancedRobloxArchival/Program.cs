@@ -53,6 +53,7 @@ namespace AdvancedRobloxArchival
         static void Main(string[] args)
         {
             Console.Title = "Advanced Roblox Archival | Made by Yakov :D";
+            ParseArguments(args);
             Start();
         }
 
@@ -273,6 +274,42 @@ namespace AdvancedRobloxArchival
         static void SaveConfigOccasionally(object sender, DoWorkEventArgs e)
         {
             File.WriteAllText("CheckedFiles.json", JsonConvert.SerializeObject(CheckedFiles.ToArray()));
+        }
+
+        static void ParseArguments(string[] args)
+        {
+            bool isValue = false;
+            string currentArgument = null;
+            foreach (var arg in args)
+            {
+                isValue = !arg.StartsWith("-");
+                if (isValue)
+                {
+                    string argumentValue = arg.Trim('"');
+                    switch (currentArgument)
+                    {
+                        case "Mode":
+                            Modes mode;
+                            if (Enum.TryParse(argumentValue, out mode))
+                            {
+                                CurrentMode = mode;
+                            }
+                            break;
+                    }
+                }
+                else
+                {
+                    currentArgument = arg.Substring(1);
+                    switch (currentArgument)
+                    {
+                        case "?":
+                        case "help":
+                            Console.WriteLine("TODO: list of available arguments");
+                            Environment.Exit(0);
+                            return;
+                    }
+                }
+            }
         }
     }
 }
