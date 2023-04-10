@@ -50,11 +50,13 @@ namespace AdvancedRobloxArchival
     internal class Program
     {
         public static readonly Version version = typeof(Program).Assembly.GetName().Version;
-        public static readonly string cache = Path.Combine(Path.GetTempPath(), "ArchiveCache");
-        public static string archivePath;
-        public static List<string> CheckedFiles = new List<string>();
-        public static BackgroundWorker worker = new BackgroundWorker();
-        public static int ArchivedCount = 0;
+        private static readonly string CachePath = Path.Combine(Path.GetTempPath(), "ArchiveCache");
+        private static string ArchivePath;
+        private static List<string> CheckedFiles = new List<string>();
+        private static BackgroundWorker worker = new BackgroundWorker();
+        private static int ArchivedCount = 0;
+        private static int UploadQueue = 0;
+
 
         public static string versionString
         {
@@ -93,8 +95,8 @@ namespace AdvancedRobloxArchival
  /_/ \_\__,_|\_/\__,_|_||_\__\___\__,_| |_|_\\___/|___/____\___/_/\_\ \__,_|_| \__|_||_|_|\_/\__,_|_|
  by yakov :D
 ", ConsoleColor.Cyan);
-            if (Directory.Exists(cache)) new DirectoryInfo(cache).Delete(true);
-            Directory.CreateDirectory(cache);
+            if (Directory.Exists(CachePath)) new DirectoryInfo(CachePath).Delete(true);
+            Directory.CreateDirectory(CachePath);
             if (Mode == Modes.Unspecified)
             {
                 ConsoleGlobal.Singleton.WriteContent(@" features:
@@ -122,11 +124,11 @@ namespace AdvancedRobloxArchival
             }
 
             ConsoleGlobal.Singleton.WriteContentNoLine("[*] Enter the full directory path where archives will be kept: ", ConsoleColor.Yellow);
-            archivePath = Console.ReadLine().Trim('"');
-            if (!Directory.Exists(archivePath)) Directory.CreateDirectory(archivePath);
+            ArchivePath = Console.ReadLine().Trim('"');
+            if (!Directory.Exists(ArchivePath)) Directory.CreateDirectory(ArchivePath);
             foreach (string i in Enum.GetNames(typeof(BinaryArchive.BinaryTypes)))
             {
-                string CategoryPath = Path.Combine(archivePath, i);
+                string CategoryPath = Path.Combine(ArchivePath, i);
                 if (!Directory.Exists(CategoryPath)) Directory.CreateDirectory(CategoryPath);
             }
 
@@ -203,8 +205,8 @@ namespace AdvancedRobloxArchival
                                     unlocked = true;
                                 }
                             }
-                            if (filenames.Any()) archive.ExtractFiles(cache, filenames.ToArray());
-                            var archives = Directory.EnumerateFiles(cache, "*.*", SearchOption.AllDirectories);
+                            if (filenames.Any()) archive.ExtractFiles(CachePath, filenames.ToArray());
+                            var archives = Directory.EnumerateFiles(CachePath, "*.*", SearchOption.AllDirectories);
                             foreach (string filename in archives)
                             {
                                 BinaryArchive binaryArchive = CheckFileAuthenticity(filename, true);
@@ -271,7 +273,7 @@ namespace AdvancedRobloxArchival
 
         static void ArchiveFile(BinaryArchive archive)
         {
-            string destination = Path.Combine(archivePath, archive.BinaryType.ToString(), archive.Version + ".exe");
+            string destination = Path.Combine(ArchivePath, archive.BinaryType.ToString(), archive.Version + ".exe");
             if (File.Exists(destination))
             {
                 if (archive.FromCache)
