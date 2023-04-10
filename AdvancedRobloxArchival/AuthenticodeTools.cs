@@ -40,7 +40,7 @@ namespace AdvancedRobloxArchival
         public static bool IsTrusted(string fileName)
         {
             uint result = WinVerifyTrust(fileName);
-            return result == 0 || result == 2148204812 /* Revoked certficate */;
+            return result == 0 || result == 0x800B010C /* Revoked certficate */;
         }
 
 
