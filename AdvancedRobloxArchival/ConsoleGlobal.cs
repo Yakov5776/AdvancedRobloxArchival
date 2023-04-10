@@ -42,6 +42,20 @@ namespace AdvancedRobloxArchival
             WriteContent($"[Thread {Thread.ToString()}] {content}", color);
         }
 
+        public bool WriteContentYesOrNo(string content, ConsoleColor color, ConsoleColor color2)
+        {
+            Back:
+            ConsoleGlobal.Singleton.WriteContentNoLine(content, color);
+            ConsoleGlobal.Singleton.WriteContentNoLine(" (y/n) ", color2);
+            char res = Char.ToUpper(Console.ReadLine().FirstOrDefault());
+            if (res == 'Y') return true;
+            if (res == 'N') return false;
+
+            Console.SetCursorPosition(0, Console.CursorTop - 1);
+            ClearCurrentConsoleLine();
+            goto Back;
+        }
+
         public int WriteChoiceMenu(string[] Options, ConsoleColor color, ConsoleColor color2)
         {
             int index = 1;
