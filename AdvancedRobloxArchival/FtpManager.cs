@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static AdvancedRobloxArchival.BinaryArchive;
 
@@ -21,6 +22,7 @@ namespace AdvancedRobloxArchival
 
     internal class FtpManager
     {
+        private static readonly SemaphoreSlim _ftpSemaphore = new SemaphoreSlim(1);
         private static List<KeyValuePair<string, BinaryTypes>> ExistingUploads = new List<KeyValuePair<string, BinaryTypes>>();
         private static FtpWebRequest FtpRequest { get; set; }
         private static FtpWebRequest CreateNewFtpWebRequest(string requestUriString)
@@ -49,6 +51,7 @@ namespace AdvancedRobloxArchival
 
         public static bool UploadFile(BinaryArchive binary)
         {
+            _ftpSemaphore.Wait();
             FtpRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/{binary.BinaryType}/{Path.GetFileName(binary.Path)}");
             FtpRequest.Method = WebRequestMethods.Ftp.UploadFile;
 
@@ -67,6 +70,10 @@ namespace AdvancedRobloxArchival
             catch
             {
                 return false;
+            }
+            finally
+            {
+                _ftpSemaphore.Release();
             }
         }
 
