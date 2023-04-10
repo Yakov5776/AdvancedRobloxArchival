@@ -56,7 +56,7 @@ namespace AdvancedRobloxArchival
         private static BackgroundWorker worker = new BackgroundWorker();
         private static int ArchivedCount = 0;
         private static int UploadQueue = 0;
-        private static bool UseArchiveServer;
+        public static bool UseArchiveServer;
 
 
         public static string versionString
