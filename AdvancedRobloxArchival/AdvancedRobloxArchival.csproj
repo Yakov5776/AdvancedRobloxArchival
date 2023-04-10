@@ -78,6 +78,7 @@
     <Compile Include="AuthenticodeTools.cs" />
     <Compile Include="ConfigManager.cs" />
     <Compile Include="ConsoleGlobal.cs" />
+    <Compile Include="FtpManager.cs" />
     <Compile Include="PeHeaderReader.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -56,6 +56,7 @@ namespace AdvancedRobloxArchival
         private static BackgroundWorker worker = new BackgroundWorker();
         private static int ArchivedCount = 0;
         private static int UploadQueue = 0;
+        private static bool UseArchiveServer;
 
 
         public static string versionString
@@ -106,6 +107,24 @@ namespace AdvancedRobloxArchival
   - has error handling and dumps logs when if it breaks (hopefully it doesn't)
   - it organizes files by the version and categorizes it to the appropriate binary categories (Client, Studio, RCC)
 ", ConsoleColor.DarkGray);
+
+                if (!ConfigManager.ConfigExist() || !ConfigManager.Settings.ContainsKey("UseArchiveServer"))
+                {
+                    ConsoleGlobal.Singleton.WriteContent(" [*] Hey! it seems like it's your first time.", ConsoleColor.Yellow);
+                    bool res = ConsoleGlobal.Singleton.WriteContentYesOrNo(" Would you like to contribute any newly found clients to the public robloxopolis archival FTP server?", ConsoleColor.Yellow, ConsoleColor.Cyan);
+                    if (!res)
+                    {
+                        ConsoleGlobal.Singleton.WriteContent("\n Alright D: Just remember you could change your mind at any time by clearing config.json", ConsoleColor.Red);
+                        ConsoleGlobal.Singleton.WriteContentNoLine(" Press any key to continue...", ConsoleColor.White);
+                        Console.ReadLine();
+                    }
+                    ConfigManager.Settings["UseArchiveServer"] = res;
+                    ConfigManager.FlushConfig();
+                    Console.Clear();
+                    Start();
+                    return;
+                }
+
                 ConsoleGlobal.Singleton.WriteContent(" [*] What would you like to do?\n", ConsoleColor.Cyan);
 
                 string[] Options = { "Scan all drives (recommended)", "Scan a specific directory" };
@@ -157,6 +176,7 @@ namespace AdvancedRobloxArchival
             timer.Elapsed += timer_Elapsed;
             timer.Start();
             DateTime startTime = DateTime.Now;
+            UseArchiveServer = ConfigManager.Settings["UseArchiveServer"].ToObject<bool>() && FtpManager.IsHostnameResolvable();
             foreach (var item in query)
             {
                 ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
@@ -169,6 +189,13 @@ namespace AdvancedRobloxArchival
                 ConsoleGlobal.Singleton.WriteColoredOutput(out2, ConsoleColor.Yellow, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.White);
                 ConsoleGlobal.Singleton.WriteRedSeparator();
                 ConsoleGlobal.Singleton.WriteColoredOutput(out3, ConsoleColor.Cyan, ConsoleColor.Yellow);
+
+                if (UseArchiveServer)
+                {
+                    ConsoleGlobal.Singleton.WriteRedSeparator();
+                    string out4 = $"Upload Queue: |(|{UploadQueue}|)";
+                    ConsoleGlobal.Singleton.WriteColoredOutput(out4, ConsoleColor.Yellow, ConsoleColor.White, UploadQueue > 0 ? ConsoleColor.Red : ConsoleColor.Cyan, ConsoleColor.White);
+                }
 
                 attempt++;
                 // TODO: better way to do this via Everything rules
@@ -239,13 +266,28 @@ namespace AdvancedRobloxArchival
             ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
 
             string succ1 = "[*] |Archive Completed!!!";
-            string succ2 = $"Archived |{ArchivedCount}| files in |{(int)totalTimeTaken.TotalMinutes}| minutes!!";
+            string succ2 = $"Archived |{ArchivedCount}| files in |{(int)totalTimeTaken.TotalMinutes}| minutes!!\n";
 
             ConsoleGlobal.Singleton.WriteColoredOutput(succ1, ConsoleColor.Yellow, ConsoleColor.Green);
             ConsoleGlobal.Singleton.WriteRedSeparator();
             ConsoleGlobal.Singleton.WriteColoredOutput(succ2, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Yellow, ConsoleColor.Cyan, ConsoleColor.Yellow);
             TaskbarFlash.FlashWindowEx();
             System.Media.SystemSounds.Beep.Play();
+            if (UseArchiveServer && UploadQueue > 0)
+            {
+                while (UploadQueue > 0)
+                {
+                    string succ3 = "[*] |Client uploading has not yet finished!!";
+                    string succ4 = $"(|{UploadQueue}|)| Clients remaining!";
+                    ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
+                    ConsoleGlobal.Singleton.WriteColoredOutput(succ3, ConsoleColor.Yellow, ConsoleColor.Red);
+                    ConsoleGlobal.Singleton.WriteContentNoLine(" | ", ConsoleColor.White);
+                    ConsoleGlobal.Singleton.WriteColoredOutput(succ4, ConsoleColor.White, ConsoleColor.Cyan, ConsoleColor.White, ConsoleColor.Yellow);
+                    Thread.Sleep(1000);
+                }
+
+                ConsoleGlobal.Singleton.ClearCurrentConsoleLine();
+            }
             Console.ReadLine();
         }
 
@@ -290,6 +332,23 @@ namespace AdvancedRobloxArchival
                 DateTime fileTimeStamp = new PeHeaderReader(destination).TimeStamp;
                 if (fileTimeStamp < DateTime.UtcNow && fileTimeStamp > new DateTime(2005, 1, 1)) // Ensure they're not a super old date or a future date
                     File.SetLastWriteTimeUtc(destination, fileTimeStamp);
+
+                if (UseArchiveServer)
+                {
+                    UploadQueue++;
+                    Thread uploadThread = new Thread(() =>
+                    {
+                        bool success = FtpManager.UploadFile(archive.BinaryType, archive.Path);
+                        if (success) UploadQueue--;
+                        else
+                        {
+                            // TODO: retries, and of course, if repeatedly fail, then disable this feature.
+                            UploadQueue--;
+                        }
+                    });
+                    uploadThread.IsBackground = true;
+                    uploadThread.Start();
+                }
             }
         }
 
