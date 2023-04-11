@@ -1,6 +1,7 @@
 ﻿using EverythingNet.Core;
 using EverythingNet.Query;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -295,6 +296,21 @@ namespace AdvancedRobloxArchival
                                 CurrentMode = mode;
                             }
                             break;
+                        case "identify-file":
+                            BinaryArchive binary = BinaryArchive.CheckFileAuthenticity(argumentValue);
+                            JObject FileResponse = null;
+                            if (binary.Genuine)
+                                FileResponse = new JObject(
+                                    new JProperty("version", binary.Version),
+                                    new JProperty("type", binary.BinaryType.ToString()),
+                                    new JProperty("pe_date", new PeHeaderReader(binary.Path).FileHeader.TimeDateStamp),
+                                    new JProperty("digital_signature", "verified"));
+                            else
+                                FileResponse = new JObject(new JProperty("digital_signature", "not_verified"));
+
+                            Console.Write(FileResponse.ToString(Formatting.None));
+                            Environment.Exit(0);
+                            return;
                     }
                 }
                 else
