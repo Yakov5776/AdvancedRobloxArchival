@@ -1,7 +1,6 @@
 ﻿using EverythingNet.Core;
 using EverythingNet.Query;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -22,7 +21,7 @@ namespace AdvancedRobloxArchival
         public static string ArchivePath;
         private static List<string> CheckedFiles = new List<string>();
         private static BackgroundWorker worker = new BackgroundWorker();
-        private static Modes CurrentMode = Modes.Unspecified;
+        public static Modes CurrentMode = Modes.Unspecified;
         public static int ArchivedCount = 0;
         public static int UploadArchivedCount = 0;
         public static int UploadQueue = 0;
@@ -44,7 +43,7 @@ namespace AdvancedRobloxArchival
             }
         }
 
-        private enum Modes : int
+        public enum Modes : int
         {
             Unspecified,
             ScanAllDrives,
@@ -54,7 +53,7 @@ namespace AdvancedRobloxArchival
         static void Main(string[] args)
         {
             Console.Title = "Advanced Roblox Archival | Made by Yakov :D";
-            ParseArguments(args);
+            ArgumentInfo.ParseArguments(args);
             Start();
         }
 
@@ -275,57 +274,6 @@ namespace AdvancedRobloxArchival
         static void SaveConfigOccasionally(object sender, DoWorkEventArgs e)
         {
             File.WriteAllText("CheckedFiles.json", JsonConvert.SerializeObject(CheckedFiles.ToArray()));
-        }
-
-        static void ParseArguments(string[] args)
-        {
-            bool isValue = false;
-            string currentArgument = null;
-            foreach (var arg in args)
-            {
-                isValue = !arg.StartsWith("-");
-                if (isValue)
-                {
-                    string argumentValue = arg.Trim('"');
-                    switch (currentArgument)
-                    {
-                        case "mode":
-                            Modes mode;
-                            if (Enum.TryParse(argumentValue, out mode))
-                            {
-                                CurrentMode = mode;
-                            }
-                            break;
-                        case "identify-file":
-                            BinaryArchive binary = BinaryArchive.CheckFileAuthenticity(argumentValue);
-                            JObject FileResponse = null;
-                            if (binary.Genuine)
-                                FileResponse = new JObject(
-                                    new JProperty("version", binary.Version),
-                                    new JProperty("type", binary.BinaryType.ToString()),
-                                    new JProperty("pe_date", new PeHeaderReader(binary.Path).FileHeader.TimeDateStamp),
-                                    new JProperty("digital_signature", "verified"));
-                            else
-                                FileResponse = new JObject(new JProperty("digital_signature", "not_verified"));
-
-                            Console.Write(FileResponse.ToString(Formatting.None));
-                            Environment.Exit(0);
-                            return;
-                    }
-                }
-                else
-                {
-                    currentArgument = arg.Substring(1).ToLower();
-                    switch (currentArgument)
-                    {
-                        case "?":
-                        case "help":
-                            Console.WriteLine("TODO: list of available arguments");
-                            Environment.Exit(0);
-                            return;
-                    }
-                }
-            }
         }
     }
 }

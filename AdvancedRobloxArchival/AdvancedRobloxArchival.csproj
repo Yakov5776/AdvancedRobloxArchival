@@ -75,6 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArgumentInfo.cs" />
     <Compile Include="AuthenticodeTools.cs" />
     <Compile Include="BinaryArchive.cs" />
     <Compile Include="ConfigManager.cs" />
