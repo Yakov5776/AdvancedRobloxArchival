@@ -9,19 +9,21 @@ namespace AdvancedRobloxArchival
     {
         public Action<string> Action { get; set; }
         public bool RequiresValue { get; set; }
+        public string Description { get; set; }
 
-        public ArgumentInfo(Action<string> action, bool requiresValue)
+        public ArgumentInfo(Action<string> action, bool requiresValue, string description)
         {
             Action = action;
             RequiresValue = requiresValue;
+            Description = description;
         }
 
         internal static Dictionary<string,ArgumentInfo> argumentActions = new Dictionary<string, ArgumentInfo>
             {
-                { "mode",  new ArgumentInfo(value => SetMode(value), true) },
-                { "identify-file", new ArgumentInfo(value => IdentifyFile(value), true) },
-                { "help", new ArgumentInfo(_ => ShowHelp(), false) },
-                { "?", new ArgumentInfo(_ => ShowHelp(), false) },
+                { "mode",  new ArgumentInfo(value => SetMode(value), true, "Sets the mode for scanning (e.g. ScanAllDrives, ScanSpecificDirectories)") },
+                { "identify-file", new ArgumentInfo(value => IdentifyFile(value), true, "Automatically analyzes and returns a JSON-friendly response for a binary") },
+                { "help", new ArgumentInfo(_ => ShowHelp(), false, "Returns this help menu") },
+                { "?", new ArgumentInfo(_ => ShowHelp(), false, null) },
             };
 
         internal static void ParseArguments(string[] args)
@@ -126,7 +128,12 @@ namespace AdvancedRobloxArchival
 
         static void ShowHelp()
         {
-            Console.WriteLine("TODO: list of available arguments");
+            Console.WriteLine("Here's a list of available argument:");
+            foreach (var arg in argumentActions)
+            {
+                if (arg.Value.Description != null)
+                    Console.WriteLine($"\"{arg.Key}\": {arg.Value.Description} | Requires Value: {arg.Value.RequiresValue}");
+            }
             Environment.Exit(0);
         }
     }
