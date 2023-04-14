@@ -1,0 +1,31 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "actions-tests" ]
+  pull_request:
+    branches: [ "actions-tests" ]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+      with: 
+        submodules: true
+    - name: Setup .NET
+      uses: microsoft/setup-msbuild@v1.1
+    - name: Setup Nuget
+      uses: nuget/setup-nuget@v1
+    - name: Restore dependencies
+      run: nuget restore AdvancedRobloxArchival.sln
+    - name: Build
+      run: |
+        msbuild.exe AdvancedRobloxArchival.sln
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+       name: Debug x64
+       path: AdvancedRobloxArchival/bin/x64/Debug
