@@ -52,7 +52,7 @@ namespace AdvancedRobloxArchival
         public static bool UploadFile(BinaryArchive binary)
         {
             _ftpSemaphore.Wait();
-            FtpRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/{binary.BinaryType}/{Path.GetFileName(binary.Path)}");
+            FtpRequest = CreateNewFtpWebRequest($"ftp://{FtpServerInformation.HostName}/{binary.BinaryType}/{binary.Version}.exe");
             FtpRequest.Method = WebRequestMethods.Ftp.UploadFile;
 
             try
