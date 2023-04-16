@@ -79,7 +79,7 @@ namespace AdvancedRobloxArchival
 
         public static bool FileExists(BinaryArchive binary)
         {
-            return (ExistingUploads.Any(x => x.Key == Path.GetFileName(binary.Path) && x.Value == binary.BinaryType));
+            return (ExistingUploads.Any(x => x.Key == $"{binary.Version}.exe" && x.Value == binary.BinaryType));
         }
 
         public static bool InitializeFtpConnection()
