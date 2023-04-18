@@ -1,6 +1,4 @@
-﻿using EverythingNet.Core;
-using EverythingNet.Query;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -123,9 +121,9 @@ namespace AdvancedRobloxArchival
             }
 
             ConsoleGlobal.Singleton.WriteContent("[*] Starting VoidTools helper", ConsoleColor.Yellow);
-            EverythingState.StartService(true, EverythingState.StartMode.Service);
+            EverythingApi.StartService();
             ConsoleGlobal.Singleton.WriteContent("[*] Waiting for index to finish", ConsoleColor.Yellow);
-            while (!EverythingState.IsReady()) Thread.Sleep(1000);
+            while (!EverythingApi.IsReady()) Thread.Sleep(1000);
             double attempt = 0;
             var everything = new Everything();
             var query = everything.Search(new Query().Files.Name.Extension("zip")
