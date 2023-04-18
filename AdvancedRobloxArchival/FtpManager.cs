@@ -23,7 +23,7 @@ namespace AdvancedRobloxArchival
     internal class FtpManager
     {
         private static readonly SemaphoreSlim _ftpSemaphore = new SemaphoreSlim(1);
-        private static List<KeyValuePair<string, BinaryTypes>> ExistingUploads = new List<KeyValuePair<string, BinaryTypes>>();
+        private static List<(string FileName, BinaryTypes BinaryType)> ExistingUploads = new List<(string, BinaryTypes)>();
         private static FtpWebRequest FtpRequest { get; set; }
         private static FtpWebRequest CreateNewFtpWebRequest(string requestUriString)
         {
@@ -79,7 +79,7 @@ namespace AdvancedRobloxArchival
 
         public static bool FileExists(BinaryArchive binary)
         {
-            return (ExistingUploads.Any(x => x.Key == $"{binary.Version}.exe" && x.Value == binary.BinaryType));
+            return (ExistingUploads.Any(x => x.FileName == $"{binary.Version}.exe" && x.BinaryType == binary.BinaryType));
         }
 
         public static bool InitializeFtpConnection()
@@ -101,10 +101,8 @@ namespace AdvancedRobloxArchival
                         {
                             string[] lineParts = line.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
                             string fileName = lineParts[lineParts.Length - 1];
-                            ExistingUploads.Add(new KeyValuePair<string, BinaryTypes>(fileName, (BinaryTypes)Enum.Parse(typeof(BinaryTypes), i)));
+                            ExistingUploads.Add((fileName, (BinaryTypes)Enum.Parse(typeof(BinaryTypes), i)));
                         }
-
-                        response.Close();
                     }
                 }
                 catch
