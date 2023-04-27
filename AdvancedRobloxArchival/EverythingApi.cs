@@ -13,7 +13,7 @@ namespace AdvancedRobloxArchival
 {
     internal class EverythingApi
     {
-        public static ResultKind resultKind { get; set; } = ResultKind.Both;
+        public ResultKind resultKind { get; set; }
         public enum ResultKind
         {
             Both,
@@ -21,6 +21,7 @@ namespace AdvancedRobloxArchival
             FoldersOnly
         }
         private const int ReadyTimeout = 60 * 1000; // 1min
+        private const int maxPathLength = 260;
         public enum ErrorCode
         {
             Ok = 0,
@@ -31,6 +32,11 @@ namespace AdvancedRobloxArchival
             CreateThread,
             InvalidIndex,
             Invalidcall
+        }
+
+        public EverythingApi(ResultKind resultKind = ResultKind.Both)
+        {
+            this.resultKind = resultKind;
         }
 
         public static bool IsStarted()
@@ -88,7 +94,7 @@ namespace AdvancedRobloxArchival
             System.Diagnostics.Process.Start(exePath, options);
         }
 
-        public static List<string> Search(string query)
+        public List<string> Search(string query)
         {
             EverythingWrapper.Everything_SetMatchWholeWord(false);
             EverythingWrapper.Everything_SetMatchPath(false);
@@ -96,12 +102,12 @@ namespace AdvancedRobloxArchival
             var searchPattern = ApplySearchResultKind(query);
             EverythingWrapper.Everything_SetSearch(searchPattern);
             EverythingWrapper.Everything_Query(true);
-            ErrorCode LastErrorCode = GetError();
+            ErrorCode LastErrorCode = GetLastError();
 
             return GetResults();
         }
 
-        private static string ApplySearchResultKind(string searchPatten)
+        private string ApplySearchResultKind(string searchPatten)
         {
             switch (resultKind)
             {
@@ -114,19 +120,17 @@ namespace AdvancedRobloxArchival
             }
         }
 
-        private static List<string> GetResults()
+        private List<string> GetResults()
         {
             List<string> results = new List<string>();
             var numResults = EverythingWrapper.Everything_GetNumResults();
-            for (UInt32 i = 0; i < numResults; i++) results.Add(EverythingWrapper.Everything_GetResultFileName(i));
+            for (UInt32 i = 0; i < numResults; i++)
+            {
+                StringBuilder builder = new StringBuilder(maxPathLength);
+                EverythingWrapper.Everything_GetResultFullPathName(i, builder, maxPathLength);
+                results.Add(builder.ToString());
+            }   
             return results;
-        }
-
-        private static ErrorCode GetError()
-        {
-            var error = EverythingWrapper.Everything_GetLastError();
-
-            return (ErrorCode)error;
         }
     }
 
