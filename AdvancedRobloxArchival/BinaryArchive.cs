@@ -61,7 +61,8 @@ namespace AdvancedRobloxArchival
 
         public static void ArchiveFile(BinaryArchive binary)
         {
-            string destination = System.IO.Path.Combine(Program.ArchivePath, binary.BinaryType.ToString(), binary.Version + ".exe");
+            string destination = GetDestinationPath(binary);
+
             if (File.Exists(destination))
             {
                 if (binary.FromCache)
@@ -112,5 +113,7 @@ namespace AdvancedRobloxArchival
                 }
             }
         }
+
+        public static string GetDestinationPath(BinaryArchive binary) => System.IO.Path.Combine(Program.ArchivePath, binary.BinaryType.ToString(), binary.Version + ".exe");
     }
 }
