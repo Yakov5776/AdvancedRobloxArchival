@@ -1,6 +1,4 @@
-﻿using EverythingNet.Core;
-using EverythingNet.Query;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SevenZip;
 using System;
 using System.Collections.Generic;
@@ -123,17 +121,12 @@ namespace AdvancedRobloxArchival
             }
 
             ConsoleGlobal.Singleton.WriteContent("[*] Starting VoidTools helper", ConsoleColor.Yellow);
-            EverythingState.StartService(true, EverythingState.StartMode.Service);
+            EverythingApi.StartService();
             ConsoleGlobal.Singleton.WriteContent("[*] Waiting for index to finish", ConsoleColor.Yellow);
-            while (!EverythingState.IsReady()) Thread.Sleep(1000);
+            while (!EverythingApi.IsReady()) Thread.Sleep(1000);
             double attempt = 0;
-            var everything = new Everything();
-            var query = everything.Search(new Query().Files.Name.Extension("zip")
-                                              .Or.Name.Extension("7z")
-                                              .Or.Name.Extension("rar")
-                                              .Or.Name.Extension("exe")
-                                              .And.Size.GreaterThan(3, EverythingNet.Query.SizeUnit.Mb)
-                                              .And.Size.LessThan(2, EverythingNet.Query.SizeUnit.Gb));
+            var everything = new EverythingApi(EverythingApi.ResultKind.FilesOnly);
+            var query = everything.Search(EverythingFilters.BuildGenericFilter($"!\"{ArchivePath}\""));
             if (CurrentMode == Modes.ScanSpecificDirectories)
             {
                 ConsoleGlobal.Singleton.WriteContent("[*] Specific directory searching is not available yet! Check back later.", ConsoleColor.Red);
@@ -169,20 +162,17 @@ namespace AdvancedRobloxArchival
                 }
 
                 attempt++;
-                // TODO: better way to do this via Everything rules
-                // Potential solution: acquire and modify EverythingNet to solution and add more versatile rules
-                if (item.FullPath.Substring(1).StartsWith(":\\$Recycle.Bin") || item.FullPath.Substring(1).StartsWith(":\\Windows")) continue;
-                if (CheckedFiles.Contains(item.FullPath)) continue; // intentionally skipped already checked zips.
-                CheckedFiles.Add(item.FullPath);
-                if (item.FullPath.EndsWith(".exe"))
+                if (CheckedFiles.Contains(item)) continue; // intentionally skipped already checked zips.
+                else CheckedFiles.Add(item);
+                if (item.EndsWith(".exe"))
                 {
-                    BinaryArchive binaryArchive = BinaryArchive.CheckFileAuthenticity(item.FullPath, false);
+                    BinaryArchive binaryArchive = BinaryArchive.CheckFileAuthenticity(item, false);
                     if (binaryArchive.Genuine) BinaryArchive.ArchiveFile(binaryArchive);
                 }
                 else
                     try
                     {
-                        using (SevenZipExtractor archive = new SevenZipExtractor(item.FullPath))
+                        using (SevenZipExtractor archive = new SevenZipExtractor(item))
                         {
                             if (!archive.Check()) continue;
                             List<string> filenames = new List<string>();
