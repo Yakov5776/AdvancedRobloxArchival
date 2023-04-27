@@ -57,8 +57,9 @@ namespace AdvancedRobloxArchival
 
             try
             {
+                string newdestination = Path.Combine(Program.ArchivePath, binary.BinaryType.ToString(), binary.Version + ".exe");
                 using (Stream destinationStream = FtpRequest.GetRequestStream())
-                using (FileStream sourceStream = new FileStream(binary.Path, FileMode.Open))
+                using (FileStream sourceStream = new FileStream(newdestination, FileMode.Open))
                 {
                     sourceStream.CopyTo(destinationStream);
                 }
