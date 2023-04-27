@@ -11,6 +11,48 @@ using System.Threading.Tasks;
 
 namespace AdvancedRobloxArchival
 {
+    class EverythingFilters
+    {
+        private static readonly Unit DefualtMinimumSize = new Unit(3, SizeUnitEnum.Mb);
+        private static readonly Unit DefualtMaximumSize = new Unit(2, SizeUnitEnum.Gb);
+        private static readonly string[] MatchExtensions = { "zip", "7z", "rar", "exe" };
+        private static readonly string[] DefualtExclusionPaths = { "!:\\$recycle.bin", "!:\\Windows" };
+
+        public static string BuildGenericFilter(params string[] exclusionPath)
+        {
+            string result = string.Join("|", MatchExtensions.Select(ext => $"*.{ext}"));
+            result += $" size:{DefualtMinimumSize}..{DefualtMaximumSize}";
+            foreach (string path in DefualtExclusionPaths) result += $" {path}";
+            foreach (string path in exclusionPath) result += $" {path}";
+
+            return result;
+        }
+
+        public enum SizeUnitEnum
+        {
+            Kb,
+            Mb,
+            Gb,
+        }
+
+        public struct Unit
+        {
+            public Unit(int size, SizeUnitEnum sizeunit)
+            {
+                Size = size;
+                SizeUnit = sizeunit;
+            }
+
+            public int Size { get; }
+            public SizeUnitEnum SizeUnit { get; }
+
+            public override string ToString()
+            {
+                return string.Concat(Size, SizeUnit.ToString().ToLower());
+            }
+        }
+    }
+
     internal class EverythingApi
     {
         public ResultKind resultKind { get; set; }
