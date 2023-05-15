@@ -8,7 +8,10 @@ on:
 
 jobs:
   build:
-
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        platform: [x64, x86]
     runs-on: windows-latest
 
     steps:
@@ -21,9 +24,9 @@ jobs:
       run: nuget restore AdvancedRobloxArchival.sln
     - name: Build
       run: |
-        msbuild.exe AdvancedRobloxArchival.sln
+        msbuild.exe AdvancedRobloxArchival.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
       with:
-       name: Debug x64
-       path: AdvancedRobloxArchival/bin/x64/Debug
+       name: AdvancedRobloxArchival (${{ matrix.configuration }}, ${{ matrix.platform }})
+       path: AdvancedRobloxArchival/bin/${{ matrix.platform }}/${{ matrix.configuration }}
