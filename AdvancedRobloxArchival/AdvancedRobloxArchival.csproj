@@ -88,6 +88,7 @@
     <Compile Include="PropertyMatching.cs" />
     <Compile Include="SingletonBase.cs" />
     <Compile Include="TaskbarFlash.cs" />
+    <Compile Include="WebManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

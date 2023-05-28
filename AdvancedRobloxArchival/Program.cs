@@ -124,6 +124,8 @@ namespace AdvancedRobloxArchival
                 if (!Directory.Exists(CategoryPath)) Directory.CreateDirectory(CategoryPath);
             }
 
+            ConsoleGlobal.Singleton.WriteContent("[*] Starting Web Server at: " + WebManager.HostName.Remove(WebManager.HostName.Length-1), ConsoleColor.Yellow);
+            WebManager.Start();
             ConsoleGlobal.Singleton.WriteContent("[*] Starting VoidTools helper", ConsoleColor.Yellow);
             EverythingApi.StartService();
             ConsoleGlobal.Singleton.WriteContent("[*] Waiting for index to finish", ConsoleColor.Yellow);
