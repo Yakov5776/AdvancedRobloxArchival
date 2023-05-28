@@ -10,7 +10,7 @@ namespace AdvancedRobloxArchival
 {
     internal class ConfigManager
     {
-        private const string ConfigFilename = "config.json";
+        public const string ConfigFilename = "config.json";
         private static bool ConfigInitialized = false;
         private static JObject _settings;
         public static JObject Settings {
@@ -20,6 +20,8 @@ namespace AdvancedRobloxArchival
                 return _settings;
             }
         }
+
+        public static bool CheckKey(string key) => Settings.ContainsKey(key);
 
         private static void CreateDefaultConfig()
         {

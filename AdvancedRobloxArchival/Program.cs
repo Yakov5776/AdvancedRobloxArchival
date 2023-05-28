@@ -76,13 +76,17 @@ namespace AdvancedRobloxArchival
   - it organizes files by the version and categorizes it to the appropriate binary categories (Client, Studio, RCC)
 ", ConsoleColor.DarkGray);
 
-                if (!ConfigManager.ConfigExist() || !ConfigManager.Settings.ContainsKey("UseArchiveServer"))
+                if (!ConfigManager.ConfigExist())
                 {
                     ConsoleGlobal.Singleton.WriteContent(" [*] Hey! it seems like it's your first time.", ConsoleColor.Yellow);
+                }
+
+                if (!ConfigManager.CheckKey("UseArchiveServer"))
+                {
                     bool res = ConsoleGlobal.Singleton.WriteContentYesOrNo(" Would you like to contribute any newly found clients to the public robloxopolis archival FTP server?", ConsoleColor.Yellow, ConsoleColor.Cyan);
                     if (!res)
                     {
-                        ConsoleGlobal.Singleton.WriteContent("\n Alright D: Just remember you could change your mind at any time by clearing config.json", ConsoleColor.Red);
+                        ConsoleGlobal.Singleton.WriteContent($"\n Alright D: Just remember you could change your mind at any time by clearing {ConfigManager.ConfigFilename}", ConsoleColor.Red);
                         ConsoleGlobal.Singleton.WriteContentNoLine(" Press any key to continue...", ConsoleColor.White);
                         Console.ReadLine();
                     }
