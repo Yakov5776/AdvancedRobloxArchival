@@ -16,14 +16,14 @@ namespace AdvancedRobloxArchival
         private static readonly Unit DefualtMinimumSize = new Unit(3, SizeUnitEnum.Mb);
         private static readonly Unit DefualtMaximumSize = new Unit(2, SizeUnitEnum.Gb);
         private static readonly string[] MatchExtensions = { "zip", "7z", "rar", "exe" };
-        private static readonly string[] DefualtExclusionPaths = { "!:\\$recycle.bin", "!:\\Windows" };
+        private static readonly string[] DefualtPathFilters = { "!:\\$recycle.bin", "!:\\Windows" };
 
-        public static string BuildGenericFilter(params string[] exclusionPath)
+        public static string BuildGenericFilter(params string[] query)
         {
             string result = string.Join("|", MatchExtensions.Select(ext => $"*.{ext}"));
             result += $" size:{DefualtMinimumSize}..{DefualtMaximumSize}";
-            foreach (string path in DefualtExclusionPaths) result += $" {path}";
-            foreach (string path in exclusionPath) result += $" {path}";
+            foreach (string path in DefualtPathFilters) result += $" {path}";
+            foreach (string path in query) result += $" {path}";
 
             return result;
         }
