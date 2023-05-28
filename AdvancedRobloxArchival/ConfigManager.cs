@@ -15,8 +15,11 @@ namespace AdvancedRobloxArchival
         private static JObject _settings;
         public static JObject Settings {
             get {
-                if (!ConfigExist()) CreateDefaultConfig();
-                else if (!ConfigInitialized) InitializeConfig();
+                if (!ConfigInitialized)
+                {
+                    if (!ConfigExist()) CreateDefaultConfig();
+                    else InitializeConfig();
+                }
                 return _settings;
             }
         }
