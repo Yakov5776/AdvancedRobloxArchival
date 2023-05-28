@@ -129,9 +129,7 @@ namespace AdvancedRobloxArchival
             var query = everything.Search(EverythingFilters.BuildGenericFilter($"!\"{ArchivePath}\""));
             if (CurrentMode == Modes.ScanSpecificDirectories)
             {
-                ConsoleGlobal.Singleton.WriteContent("[*] Specific directory searching is not available yet! Check back later.", ConsoleColor.Red);
-                Console.ReadLine();
-                return;
+                query = everything.Search(EverythingFilters.BuildGenericFilter($"\"{targetDir}\""));
             }
             int totalattempts = query.Count();
             if (File.Exists("CheckedFiles.json")) CheckedFiles = JsonConvert.DeserializeObject<List<string>>(File.ReadAllText("CheckedFiles.json"));
