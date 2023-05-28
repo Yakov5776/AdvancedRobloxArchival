@@ -11,12 +11,12 @@ namespace AdvancedRobloxArchival
     {
         private static HttpListener listener;
         private const int Port = 5776;
-        public static string HostName { get { return $"http://127.0.0.1:{Port}/"; } }
+        public static string HostName => $"http://127.0.0.1:{Port}";
 
         public static void Start()
         {
             listener = new HttpListener();
-            listener.Prefixes.Add(HostName);
+            listener.Prefixes.Add(HostName + "/");
             listener.Start();
 
             Task processingTask = ProcessRequestsAsync();
