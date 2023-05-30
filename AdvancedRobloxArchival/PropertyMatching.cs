@@ -33,7 +33,7 @@ namespace AdvancedRobloxArchival
 
         public static bool ConsiderBinaryCandidate(string filename)
         {
-            return filename.EndsWith(".exe") && (filename.StartsWith("Roblox") || filename.StartsWith("version-") || filename.StartsWith("RCCService"));
+            return filename.EndsWith(".exe") && (filename.StartsWith("Roblox") || filename.StartsWith("version-") || filename.StartsWith("RCCService") || filename.StartsWith("0."));
         }
     }
 }
