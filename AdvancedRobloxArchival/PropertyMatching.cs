@@ -1,14 +1,30 @@
-﻿namespace AdvancedRobloxArchival
+﻿using System;
+using System.Collections.Generic;
+
+namespace AdvancedRobloxArchival
 {
     internal class PropertyMatching
     {
+        private static Dictionary<string, BinaryArchive.BinaryTypes> signatureMap => new Dictionary<string, BinaryArchive.BinaryTypes>()
+        {
+            { "Client", BinaryArchive.BinaryTypes.RobloxClient },
+            { "Game", BinaryArchive.BinaryTypes.RobloxClient },
+            { "Studio", BinaryArchive.BinaryTypes.RobloxStudio },
+            { "Compute Cloud Service", BinaryArchive.BinaryTypes.RCCService }
+        };
+
+
         public static BinaryArchive.BinaryTypes GetBinaryTypeFromSignature(string prop)
         {
             string property = prop.Trim();
 
-            if (property.EndsWith("Client") || property.EndsWith("Game")) return BinaryArchive.BinaryTypes.RobloxClient;
-            if (property.EndsWith("Studio")) return BinaryArchive.BinaryTypes.RobloxStudio;
-            if (property.ToLower() == "roblox compute cloud service") return BinaryArchive.BinaryTypes.RCCService;
+            foreach (var signature in signatureMap)
+            {
+                if (property.EndsWith(signature.Key, StringComparison.OrdinalIgnoreCase))
+                {
+                    return signature.Value;
+                }
+            }
 
             return BinaryArchive.BinaryTypes.Miscellaneous;
         }
