@@ -15,8 +15,7 @@ namespace AdvancedRobloxArchival
 
         private static Dictionary<string, Func<HttpListenerRequest, HttpListenerResponse, Task>> pageRegisters = new Dictionary<string, Func<HttpListenerRequest, HttpListenerResponse, Task>>
         {
-            {"/", Page_Home },
-            {"/test", Page_Test }
+            {"/", Page_Home }
         };
 
         public static void Start()
@@ -145,13 +144,6 @@ namespace AdvancedRobloxArchival
         private static async Task Page_Home(HttpListenerRequest req, HttpListenerResponse res)
         {
             var buffer = System.Text.Encoding.UTF8.GetBytes(ResponseHtml);
-            await res.OutputStream.WriteAsync(buffer, 0, buffer.Length);
-        }
-
-        private static async Task Page_Test(HttpListenerRequest req, HttpListenerResponse res)
-        {
-            res.ContentType = "text/plain";
-            var buffer = System.Text.Encoding.UTF8.GetBytes("this is a test.");
             await res.OutputStream.WriteAsync(buffer, 0, buffer.Length);
         }
     }
