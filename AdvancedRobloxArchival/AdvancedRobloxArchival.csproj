@@ -67,6 +67,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -88,6 +89,7 @@
     <Compile Include="PropertyMatching.cs" />
     <Compile Include="SingletonBase.cs" />
     <Compile Include="TaskbarFlash.cs" />
+    <Compile Include="WebManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

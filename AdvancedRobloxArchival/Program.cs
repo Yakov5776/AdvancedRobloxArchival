@@ -124,6 +124,12 @@ namespace AdvancedRobloxArchival
                 if (!Directory.Exists(CategoryPath)) Directory.CreateDirectory(CategoryPath);
             }
 
+            if (ConfigManager.CheckKey("EnableExperimentalWebInterface") && ConfigManager.Settings["EnableExperimentalWebInterface"].ToObject<bool>())
+            {
+                ConsoleGlobal.Singleton.WriteContent("[*] Starting Web Server at: " + WebManager.HostName, ConsoleColor.Yellow);
+                WebManager.Start();
+            }
+
             ConsoleGlobal.Singleton.WriteContent("[*] Starting VoidTools helper", ConsoleColor.Yellow);
             EverythingApi.StartService();
             ConsoleGlobal.Singleton.WriteContent("[*] Waiting for index to finish", ConsoleColor.Yellow);
