@@ -44,16 +44,20 @@ namespace AdvancedRobloxArchival
 
         public bool WriteContentYesOrNo(string content, ConsoleColor color, ConsoleColor color2)
         {
-            Back:
-            ConsoleGlobal.Singleton.WriteContentNoLine(content, color);
-            ConsoleGlobal.Singleton.WriteContentNoLine(" (y/n) ", color2);
-            char res = Char.ToUpper(Console.ReadLine().FirstOrDefault());
-            if (res == 'Y') return true;
-            if (res == 'N') return false;
+            while (true)
+            {
+                WriteContentNoLine(content, color);
+                WriteContentNoLine(" (y/n) ", color2);
 
-            Console.SetCursorPosition(0, Console.CursorTop - 1);
-            ClearCurrentConsoleLine();
-            goto Back;
+                char response = char.ToUpper(Console.ReadLine().FirstOrDefault());
+                if (response == 'Y') return true;
+                if (response == 'N') return false;
+                else
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    ClearCurrentConsoleLine();
+                }
+            }
         }
 
         public int WriteChoiceMenu(string[] Options, ConsoleColor color, ConsoleColor color2)
@@ -67,20 +71,29 @@ namespace AdvancedRobloxArchival
             }
 
             WriteContent(menu, color);
-        Back:
-            WriteContentNoLine(" Select an Option: ", color2);
-            Console.ForegroundColor = ConsoleColor.Yellow;
 
-            var isNumeric = int.TryParse(Console.ReadLine(), out int n);
+            int choice;
+            bool isValidChoice = false;
 
-            if (!isNumeric || (n > Options.Length || n <= 0))
+            do
             {
-                Console.SetCursorPosition(0, Console.CursorTop - 1);
-                ClearCurrentConsoleLine();
-                goto Back;
-            }
+                WriteContentNoLine(" Select an Option: ", color2);
+                Console.ForegroundColor = ConsoleColor.Yellow;
 
-            return n;
+                var isNumeric = int.TryParse(Console.ReadLine(), out choice);
+
+                if (isNumeric && choice > 0 && choice <= Options.Length)
+                {
+                    isValidChoice = true;
+                }
+                else
+                {
+                    Console.SetCursorPosition(0, Console.CursorTop - 1);
+                    ClearCurrentConsoleLine();
+                }
+            } while (!isValidChoice);
+
+            return choice;
         }
 
         public void ClearCurrentConsoleLine()
