@@ -96,21 +96,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <Target Name="CopyFiles" AfterTargets="Build">
-    <PropertyGroup>
-      <x86bin>Everything32.exe</x86bin>
-      <x64bin>Everything64.exe</x64bin>
-      <x86dll>Everything32.dll</x86dll>
-      <x64dll>Everything64.dll</x64dll>
-    </PropertyGroup>
     <ItemGroup Condition="'$(Platform)' == 'x86'">
-      <CopyFile Include="$(ProjectDir)\$(x86bin)" DestinationFolder="$(TargetDir)" />
-      <CopyFile Include="$(ProjectDir)\$(x86dll)" DestinationFolder="$(TargetDir)" />
-      <CopyFile Include="$(ProjectDir)\7z.dll" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(SolutionDir)\Libraries\x86\Everything32.exe" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(SolutionDir)\Libraries\x86\Everything32.dll" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(SolutionDir)\Libraries\x86\7z.dll" DestinationFolder="$(TargetDir)" />
     </ItemGroup>
     <ItemGroup Condition="'$(Platform)' == 'x64'">
-      <CopyFile Include="$(ProjectDir)\$(x64bin)" DestinationFolder="$(TargetDir)" />
-      <CopyFile Include="$(ProjectDir)\$(x64dll)" DestinationFolder="$(TargetDir)" />
-      <CopyFile Include="$(ProjectDir)\7z64.dll" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(SolutionDir)\Libraries\x64\Everything64.exe" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(SolutionDir)\Libraries\x64\Everything64.dll" DestinationFolder="$(TargetDir)" />
+      <CopyFile Include="$(SolutionDir)\Libraries\x64\7z64.dll" DestinationFolder="$(TargetDir)" />
     </ItemGroup>
     <Copy SourceFiles="@(CopyFile)" DestinationFolder="$(TargetDir)" SkipUnchangedFiles="true" />
   </Target>
