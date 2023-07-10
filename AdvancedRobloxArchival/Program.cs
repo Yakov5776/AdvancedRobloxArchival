@@ -58,12 +58,7 @@ namespace AdvancedRobloxArchival
         static void Start()
         {
             ConsoleGlobal.Singleton.WriteContent($"Revision {versionString}", ConsoleColor.DarkGray);
-            ConsoleGlobal.Singleton.WriteContent(@"    _      _                         _   ___  ___  ___ _    _____  __              _    _          _ 
-   /_\  __| |_ ____ _ _ _  __ ___ __| | | _ \/ _ \| _ ) |  / _ \ \/ /  __ _ _ _ __| |_ (_)_ ____ _| |
-  / _ \/ _` \ V / _` | ' \/ _/ -_) _` | |   / (_) | _ \ |_| (_) >  <  / _` | '_/ _| ' \| \ V / _` | |
- /_/ \_\__,_|\_/\__,_|_||_\__\___\__,_| |_|_\\___/|___/____\___/_/\_\ \__,_|_| \__|_||_|_|\_/\__,_|_|
- by yakov :D
-", ConsoleColor.Cyan);
+            ConsoleGlobal.Singleton.WriteContent(Properties.Resources.LogoASCII, ConsoleColor.Cyan);
             if (Directory.Exists(CachePath)) new DirectoryInfo(CachePath).Delete(true);
             Directory.CreateDirectory(CachePath);
             if (CurrentMode == Modes.Unspecified)
