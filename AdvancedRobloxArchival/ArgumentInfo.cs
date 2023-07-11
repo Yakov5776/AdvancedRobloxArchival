@@ -113,7 +113,7 @@ namespace AdvancedRobloxArchival
         {
             BinaryArchive binary = BinaryArchive.CheckFileAuthenticity(path);
             JObject FileResponse = null;
-            if (binary.Genuine)
+            if (binary.DigitallySigned)
                 FileResponse = new JObject(
                     new JProperty("version", binary.Version),
                     new JProperty("type", binary.BinaryType.ToString()),

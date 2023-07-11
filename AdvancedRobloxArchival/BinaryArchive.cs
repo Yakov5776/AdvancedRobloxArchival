@@ -14,9 +14,9 @@ namespace AdvancedRobloxArchival
             RobloxStudio,
             RCCService
         }
-        public BinaryArchive(bool genuine)
+        public BinaryArchive(bool signed)
         {
-            Genuine = genuine;
+            DigitallySigned = signed;
             Version = "";
             BinaryType = BinaryTypes.Miscellaneous;
             Path = "";
@@ -31,7 +31,7 @@ namespace AdvancedRobloxArchival
             FromCache = fromcache;
         }
 
-        public bool Genuine { get; }
+        public bool DigitallySigned { get; }
         public string Path { get; set; }
         public string Version { get; set; }
         public BinaryTypes BinaryType { get; set; }

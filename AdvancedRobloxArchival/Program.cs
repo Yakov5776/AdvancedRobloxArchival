@@ -167,10 +167,10 @@ namespace AdvancedRobloxArchival
                 attempt++;
                 if (CheckedFiles.Contains(item)) continue; // intentionally skipped already checked zips.
                 else CheckedFiles.Add(item);
-                if (item.EndsWith(".exe"))
+                if (PropertyMatching.IsBinary(item))
                 {
                     BinaryArchive binaryArchive = BinaryArchive.CheckFileAuthenticity(item, false);
-                    if (binaryArchive.Genuine) BinaryArchive.ArchiveFile(binaryArchive);
+                    if (binaryArchive.DigitallySigned) BinaryArchive.ArchiveFile(binaryArchive);
                 }
                 else
                     try
@@ -201,7 +201,7 @@ namespace AdvancedRobloxArchival
                             foreach (string filename in archives)
                             {
                                 BinaryArchive binaryArchive = BinaryArchive.CheckFileAuthenticity(filename, true);
-                                if (binaryArchive.Genuine) BinaryArchive.ArchiveFile(binaryArchive);
+                                if (binaryArchive.DigitallySigned) BinaryArchive.ArchiveFile(binaryArchive);
                             }
                         }
                     }
