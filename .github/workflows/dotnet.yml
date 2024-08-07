@@ -1,10 +1,6 @@
 name: .NET
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
@@ -15,18 +11,18 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET
-      uses: microsoft/setup-msbuild@v1.1
+      uses: microsoft/setup-msbuild@v2
     - name: Setup Nuget
-      uses: nuget/setup-nuget@v1
+      uses: nuget/setup-nuget@v2
     - name: Restore dependencies
       run: nuget restore AdvancedRobloxArchival.sln
     - name: Build
       run: |
         msbuild.exe AdvancedRobloxArchival.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }}
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
        name: AdvancedRobloxArchival (${{ matrix.configuration }}, ${{ matrix.platform }})
        path: AdvancedRobloxArchival/bin/${{ matrix.platform }}/${{ matrix.configuration }}
